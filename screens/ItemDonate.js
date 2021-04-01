@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, TextInput, StyleSheet, Alert, Modal, ScrollView, KeyboardAvoidingView, FlatList} from 'react-native';
+import {View, Image, TouchableOpacity, Text, TextInput, StyleSheet, Alert, Modal, ScrollView, KeyboardAvoidingView, FlatList} from 'react-native';
 import db from '../config';
 import {ListItem} from 'react-native-elements'
-import {MyHeader} from '../components/MyHeader'
+import MyHeader from '../components/MyHeader'
 //import SantaAnimation from '../components/Santa.js';
 import firebase from 'firebase';
 
@@ -15,7 +15,7 @@ export default class BookDonate extends React.Component{
   }
 
   getBookList = () => {
-    db.collection('BookRequests').onSnapshot((data)=>{
+    db.collection('ItemRequests').onSnapshot((data)=>{
       var bookList = data.docs.map(doc => doc.data())
       //console.log("HERE " + bookList)
       this.setState({
@@ -35,16 +35,26 @@ export default class BookDonate extends React.Component{
   keyExtractor = (item, index) => index.toString()
   renderItem = ({item,i}) => {
     return (
-      <ListItem
-      key = {i}
-      title = {item.bookName}
-      subtitle = {item.reason}
-      titleStyle = {{color : 'black', fontWeight : 'bold'}}
-      rightElement = {<TouchableOpacity style = {styles.button}>
-        <Text style = {{color : 'white'}}> View </Text>
-      </TouchableOpacity>}
-      bottomDivider
-      />
+      
+      <ListItem key={i} bottomDivider>
+        <ListItem.Content>
+          <Image
+          style = {{height : 50, width : 50}}
+          source = {{uri : item.imageLink}}
+          />
+          <ListItem.Title>{item.bookName}</ListItem.Title>
+          <ListItem.Subtitle>{item.reason}</ListItem.Subtitle>
+          <View>
+            <TouchableOpacity style = {styles.button}
+            onPress = {()=>{
+              this.props.navigation.navigate('RecieverDetails', {'details' : item})
+            }}
+          >
+            <Text>View</Text>
+            </TouchableOpacity>
+          </View>
+        </ListItem.Content>
+      </ListItem>
     )
   }
     render(){
@@ -52,6 +62,7 @@ export default class BookDonate extends React.Component{
           <View style = {{flex : 1}}>
             <MyHeader
             title = 'Donate Books'
+            navigation = {this.props.navigation}
             />
             <FlatList
             keyExtractor = {this.keyExtractor}

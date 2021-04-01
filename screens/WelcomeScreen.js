@@ -32,7 +32,8 @@ export default class WelcomeScreen extends React.Component {
                 lastName : this.state.lastName,
                 contact : this.state.contact,
                 address : this.state.address,
-                emailId : this.state.emailId
+                emailId : this.state.emailId.toLowerCase(),
+                isItemRequestActive : false
             })
             return Alert.alert(
                 "User Added", 
@@ -61,14 +62,14 @@ export default class WelcomeScreen extends React.Component {
     userLogin = (emailId, password) =>{
         firebase.auth().signInWithEmailAndPassword(emailId, password)
         .then(()=>{
-            this.props.navigation.navigate('DonateBooks');
+            this.props.navigation.navigate('DonateItems');
         }
         )
         .catch(function(error) {
             // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
-            Alert.alert(errorMsg);
+            Alert.alert(errorMessage);
             // ...
           });
     }
@@ -185,7 +186,7 @@ export default class WelcomeScreen extends React.Component {
             <View style = {styles.container}>
                 <View style = {styles.profileContainer}>
                    <Santa/>
-                   <Text style = {styles.title}>Book Santa</Text> 
+                   <Text style = {styles.title}>Barter System!</Text> 
                 </View>
                 <View style = {{justifyContent : 'center', alignItems : 'center'}}>
                     {this.showModal()}
